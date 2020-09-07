@@ -3,48 +3,63 @@ import axios from 'axios';
 
 const Search = () => {
   const [term, setTerm] = useState('');
+  const [debouncedTerm, setDebouncedTerm] = useState(term || ' ');
   const [results, setResults] = useState([]);
 
   useEffect(() => {
+    if (term) {
+      const timerId = setTimeout(() => {
+        setDebouncedTerm(term);
+      }, 750);
+
+      return () => {
+        clearTimeout(timerId);
+      }
+    }
+  }, [term]);
+
+  useEffect(() => {
     const search = async () => {
-      const { data } = await axios.get('https://en.wikipedia.org/w/api.php', {
+      const { data } = await axios.get("https://en.wikipedia.org/w/api.php", {
         params: {
-          action: 'query',
-          list: 'search',
-          origin: '*',
-          format: 'json',
-          srsearch: term
+          action: "query",
+          list: "search",
+          origin: "*",
+          format: "json",
+          srsearch: debouncedTerm,
         },
       });
 
       setResults(data.query.search);
     };
 
-    if (term) {
-      search();
-    }
-  }, [term]);
+    search();
+
+  }, [debouncedTerm]);
 
   const renderedResults = results.map((result) => {
     return (
       <div key={result.pageid} className="item">
         <div className="right floated content">
-          <a 
+          <a
             className="ui button"
             href={`https://en.wikipedia.org?curid=${result.pageid}`}
           >
-          Go
+            Go
           </a>
         </div>
         <div className="content">
-          <div className="header">
-            {result.title}
-          </div>
-          <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>
+          <div className="header">{result.title}</div>
+          {/* 
+if your snopping around this code please becareful using dangerouslySetInnerHTML make sure your data is from a trusted source this was only used for knowledge of it 
           
+          dangerouslySetInnerHTML
+dangerouslySetInnerHTML is React’s replacement for using innerHTML in the browser DOM. In general, setting HTML from code is risky because it’s easy to inadvertently expose your users to a cross-site scripting (XSS) attack. So, you can set HTML directly from React, but you have to type out dangerouslySetInnerHTML and pass an object with a __html key, to remind yourself that it’s dangerous.
+          */}
+          <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>
         </div>
       </div>
-    )
+    );
   })
 
   return (
