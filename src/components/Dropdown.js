@@ -1,7 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const Dropdown = ( { options, selected, onSelectedChange }) => {
+  const [open, setOpen] = useState(false);
+  const ref = useRef();
+
+  useEffect(() => {
+    const onBodyClick = (event) => {
+      if (ref.current.contains(event.target)) {
+        return;
+      }
+
+      setOpen(false);
+    }
+
+    document.body.addEventListener('click', onBodyClick);
+
+    return () => {
+      document.body.removeEventListener('click', onBodyClick);
+    };
+  },[])
+
   const renderedOptions = options.map((option) => {
+    if (option.value === selected.value) {
+      return null;
+    }
     return (
       <article 
         key={option.value}
@@ -12,8 +34,9 @@ const Dropdown = ( { options, selected, onSelectedChange }) => {
       </article>
     )
   });
+
   return (
-    <section className="ui form">
+    <section ref={ref} className="ui form">
       <article className="field">
         <label 
           className="label"
@@ -21,7 +44,9 @@ const Dropdown = ( { options, selected, onSelectedChange }) => {
         Select a Color:
         </label>
         <article 
-          className="ui selection dropdown visible active">
+          className={`ui selection dropdown ${open ?'visible active' : ''}`}
+          onClick={() => setOpen(!open)}
+        >
           <i className="dropdown icon"></i>
           <article 
             className="text"
@@ -29,7 +54,7 @@ const Dropdown = ( { options, selected, onSelectedChange }) => {
             {selected.label}
           </article>
           <article 
-            className="menu visible transition"
+            className={`menu ${open ? 'visible transition' : ''}`}
           >
             {renderedOptions}
           </article>
