@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import Dropdown from './Dropdown';
+import Convert from './Convert';
 import { options } from '../data/languages'
+
+//API KEY only work if app is on localhost:3000 
+//AIzaSyCHUCmpR7cT_yDFHC98CZJy2LTms-IwDlM
 
 const Translate = () => {
   const [language, setLanguage] = useState(options[0]);
@@ -21,6 +25,12 @@ const Translate = () => {
         options={options}
         selected={language}
         onSelectedChange={setLanguage}
+      />
+      <hr />
+      <h3 className="ui header">Output</h3>
+      <Convert
+        language={language}
+        text={text}
       />
     </section>
   );
