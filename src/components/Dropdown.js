@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const Dropdown = ( { options, selected, onSelectedChange, label }) => {
+const Dropdown = ( {options, selected, onSelectedChange, label} ) => {
   const [open, setOpen] = useState(false);
   const ref = useRef();
 
