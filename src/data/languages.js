@@ -317,7 +317,7 @@ export const options = [
   },
   {
     label: "Serbian",
-    value: "eu"
+    value: "sr"
   },
   {
     label: "Sesotho",
